@@ -4,48 +4,42 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class Note {
-    private Map<Integer, Map<String, Integer>> feedNote;
+    private Map<Integer, Map<String, Integer>> lines;
     public Note() {
-        this.initialize();
+        this.initLines();
     }
-    public void initialize() {
-        this.feedNote = new LinkedHashMap<Integer, Map<String, Integer>>();
+    public void initLines() {
+        this.lines = new LinkedHashMap<Integer, Map<String, Integer>>();
     }
 
     public void takeNote(int day, String name) {
-        if (!this.feedNote.containsKey(day)) {
-            this.feedNote.put(day, new LinkedHashMap<String, Integer>());
-        }
-        Map<String, Integer> dayNote = this.feedNote.get(day);
+        if (!this.lines.containsKey(day)) this.lines.put(day, new LinkedHashMap<String, Integer>());
+        if (!this.lines.get(day).containsKey(name)) this.lines.get(day).put(name, 0);
 
-        if (!dayNote.containsKey(name)) {
-            dayNote.put(name, 0);
-        }
-        dayNote.put(name, dayNote.get(name)+1);
+        int curCount = this.lines.get(day).get(name);
+        this.lines.get(day).put(name, curCount+1);
+    }
+
+    public String readLine(int day) {
+        String header = "Day " + String.valueOf(day) + ": ";
+        if (!this.lines.containsKey(day)) return header + "INVALID DATE";
+
+        List<String> body = new ArrayList<String>();
+        this.lines.get(day).forEach((name,count) -> body.add(name + " " + String.valueOf(count)));
+        return header + String.join(", ", body);
     }
 
     public String totalReport() {
-        int total = calcTotal(this.feedNote);
-        return "total: " + String.valueOf(total);
+        String header = "total: ";
+        String body  = String.valueOf(calcTotal());
+        return header + body;
     }
-    public String dailyReport(int day) {
-        return "Day " + String.valueOf(day) + ": " + generateDailyReport(day);
-    }
-    private String generateDailyReport(int day) {
-        if (!this.feedNote.containsKey(day)) return "INVALID DATE";
-
-        List<String> dailyReport = new ArrayList<String>();
-        for (Map.Entry<String, Integer> e : this.feedNote.get(day).entrySet()) {
-            dailyReport.add(e.getKey() + " " + String.valueOf(e.getValue()));
-        }
-        return String.join(", ", dailyReport);
-    }
-
-    private int calcTotal(Map<Integer, Map<String, Integer>> feedNote) {
+    
+    private int calcTotal() {
         int total = 0;
-        for (Map.Entry<Integer, Map<String, Integer>> dayNote : feedNote.entrySet()) {
-            for (Map.Entry<String, Integer> eachAnimal : dayNote.getValue().entrySet()) {
-                total += eachAnimal.getValue();
+        for (Map.Entry<Integer, Map<String, Integer>> dayResult : this.lines.entrySet()) {
+            for (Map.Entry<String, Integer> animalResult : dayResult.getValue().entrySet()) {
+                total += animalResult.getValue();
             }
         }
         return total;
