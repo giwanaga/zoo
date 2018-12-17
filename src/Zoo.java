@@ -3,8 +3,6 @@ import java.util.List;
 
 public class Zoo {
     public static void main (String[] args) {
-        System.out.println("welcome to the zoo!");
-
         // init
         Dog jeff = new Dog("Jeff", 7, 9);
         Cat beth = new Cat("Beth", 3, 4);
@@ -13,6 +11,7 @@ public class Zoo {
         List<Animal> animals = Arrays.asList(jeff, beth, tom, billy);
 
         Feeder feeder = new Feeder();
+        feeder.greeting();
 
         // operation
         for (int day=1; day <= 5; day++) {
